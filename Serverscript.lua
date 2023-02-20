@@ -1,9 +1,10 @@
 print("Chat Admin made by CGG")
 -- script made by thereal#5282 with much help from Censor#3035
 -- put this script in ServerScriptService and name it however you like
+
 -- set the groupId to the group id of your group
--- all members who have a role that is higher than this number have admin
 local groupId = 14858739
+-- all members who have a role that is higher than this number have admin
 local rank = 199
 
 
