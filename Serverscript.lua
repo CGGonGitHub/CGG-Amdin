@@ -1,7 +1,6 @@
--- set the groupId to the group id of your group
--- all members who have a role that is higher than this number have admin
-local groupId = 14858739
-local rank = 199
+-- [[ Setup ]] --
+local groupId = 14858739  -- Set this to your groupId if you want to use your Group to manage Admins
+local rank = 199 -- anyone that has a higher rank than this will have admin
 
 --[[ Variables ]]--
 local Players = game:GetService("Players")
