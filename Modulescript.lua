@@ -26,6 +26,10 @@ local function getPlayer(whoFired: string, pattern: string)
 	end
 end
 
+function commands.setadmin(whoFired, player)
+	if whoFired
+end
+
 function commands.kill(whoFired, player)
 	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
