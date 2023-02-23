@@ -30,8 +30,6 @@
   
 - **addgrass** `!addgrass` *adds removed grass back*
   
-- **print** `!print ["Text"]` *prints [Text] in the dev console (F9)*
-  
 - **kidnap** `!kidnap [player]` *spawns a van, which drives through and kills the player*
   
 - **sword** `!sword [player]` *gives that player the basic roblox sword, have fun*
@@ -39,6 +37,16 @@
 - **headsize** `!headsize [player] [amount]` *make head beeg*
   
 - **jumppower** `!jumppower [player] [amount]` *sets the jumppower of [player] to [amount]*
+  
+- **setadmin** `!setadmin [player]` *gives this player permanent admin*
+  
+- **setmod** `!setmod [player]` *gives this player permanent mod*
+  
+- **settempadmin** `!settempadmin [player]` *gives this player temporary admin (only for the current server)*
+  
+- **settempmod** `!settempmod [player]` *gives this player temporary mod (only for the current server*
+  
+- **char** `!char [player] [player2]` *makes player have the character of player2*
   
 
 # more stuff coming soon!
