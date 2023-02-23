@@ -1,22 +1,23 @@
--- script made by thereal#5282 with much help from Censor#3035
--- put this script in ServerScriptService and name it however you like
-
 --[[ Variables ]]--
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local TweenService = game:GetService("TweenService")
 local commands = {}
+local tempAdmins = {}
 
 --[[ Functions]]--
-local function getPlayer(pattern: string, whoFired)
-	if pattern == "Me" or "me" then
+local function getPlayer(whoFired: string, pattern: string)
+	if string.match(pattern, "Me") or string.match(pattern, "me") then
+		print(whoFired)
 		return whoFired;
-	elseif pattern == "All" or "all" then
-		return Players:GetPlayers()
+	elseif string.match(pattern, "All") or string.match(pattern, "all") then
+		print(Players:GetPlayers())
+		return Players:GetPlayers();
 	else
 		for index, player in next, Players:GetPlayers() do
 			if player.Name:match(pattern) or player.DisplayName:match(pattern) then
+				print(player)
 				return player;
 		end
 	end
@@ -26,7 +27,7 @@ local function getPlayer(pattern: string, whoFired)
 end
 
 function commands.kill(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
 			p.Character.Humanoid.Health = 0
@@ -37,10 +38,10 @@ function commands.kill(whoFired, player)
 end
 
 function commands.anchor(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			player.Character.HumanoidRootPart.Anchored = true
+			p.Character.HumanoidRootPart.Anchored = true
 		end
 	else
 		player.Character.HumanoidRootPart.Anchored = true
@@ -48,7 +49,7 @@ function commands.anchor(whoFired, player)
 end
 
 function commands.unanchor(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
 			p.Character.HumanoidRootPart.Anchored = false
@@ -59,18 +60,19 @@ function commands.unanchor(whoFired, player)
 end
 
 function commands.walkspeed(whoFired, player, number)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	local walkspeed = tonumber(number)
 	if type(player) == "table" then
 		for _, p in player do
-			player.Character:WaitForChild("Humanoid").WalkSpeed = walkspeed
+			p.Character:WaitForChild("Humanoid").WalkSpeed = walkspeed
 		end
 	else
 		player.Character:WaitForChild("Humanoid").WalkSpeed = walkspeed
 	end
 end
+
 function commands.bring(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
 			player.Character.HumanoidRootPart.CFrame = whoFired.Character.HumanoidRootPart.CFrame
@@ -88,7 +90,7 @@ function commands.bringall(whoFired)
 end
 
 function commands.teleport(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
 			whoFired.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
@@ -99,7 +101,7 @@ function commands.teleport(whoFired, player)
 end
 
 function commands.teleportall(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	for i, v in Players:GetPlayers() do
 		if not v.Character then continue end;
 		v.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
@@ -107,10 +109,10 @@ function commands.teleportall(whoFired, player)
 end
 
 function commands.loadchar(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			player:LoadCharacter()
+			p:LoadCharacter()
 		end
 	else
 		player:LoadCharacter()
@@ -118,10 +120,10 @@ function commands.loadchar(whoFired, player)
 end
 
 function commands.invisible(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			for i, v in player.Character:GetChildren() do
+			for i, v in p.Character:GetChildren() do
 				if v:IsA("BasePart") then
 					if v.Name == "HumanoidRootPart" then
 
@@ -130,7 +132,7 @@ function commands.invisible(whoFired, player)
 					end
 				end
 			end
-			for i, v in player.Character:GetChildren() do
+			for i, v in p.Character:GetChildren() do
 				if v:IsA("Accessory") then
 					v.Handle.Transparency = 1
 				end
@@ -160,10 +162,10 @@ function commands.invisible(whoFired, player)
 	end
 end
 function commands.uninvisible(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			for i, v in player.Character:GetChildren() do
+			for i, v in p.Character:GetChildren() do
 				if v:IsA("BasePart") then
 					if v.Name == "HumanoidRootPart" then
 
@@ -214,10 +216,10 @@ function commands.addgrass(whoFired)
 end
 
 function commands.setdisplay(whoFired, player, arg1)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			player.Character.DisplayName.TextLabel.Text = arg1
+			p.Character.DisplayName.TextLabel.Text = arg1
 		end
 	else
 		player.Character.DisplayName.TextLabel.Text = arg1
@@ -225,10 +227,10 @@ function commands.setdisplay(whoFired, player, arg1)
 end
 
 function commands.kick(whoFired, player, arg1)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			player:Kick(arg1)
+			p:Kick(arg1)
 		end
 	else
 		player:Kick(arg1)
@@ -240,11 +242,11 @@ function commands.print(whoFired, arg1)
 end
 
 function commands.sword(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
 			local x = ReplicatedStorage.ClassicSword:Clone()
-			x.Parent = player.Backpack
+			x.Parent = p.Backpack
 		end
 	else
 		local x = ReplicatedStorage.ClassicSword:Clone()
@@ -253,7 +255,7 @@ function commands.sword(whoFired, player)
 end
 
 function commands.kidnap(whoFired, player)
-	player = getPlayer(player, whoFired)
+	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
 			player.Character.HumanoidRootPart.Anchored = true
@@ -262,8 +264,8 @@ function commands.kidnap(whoFired, player)
 			x.Parent = workspace
 			x.Position = player.Character.HumanoidRootPart.Position + Vector3.new(30,0,0)
 			x.CFrame = CFrame.lookAt(x.Position, player.Character.HumanoidRootPart.Position)
-			local tween1 = TweenService:Create(x, info, {Position = player.Character.HumanoidRootPart.Position})
-			local tween2 = TweenService:Create(x, info, {Position =  player.Character.HumanoidRootPart.Position + Vector3.new(-30,0,0)})
+			local tween1 = TweenService:Create(x, info, {Position = p.Character.HumanoidRootPart.Position})
+			local tween2 = TweenService:Create(x, info, {Position =  p.Character.HumanoidRootPart.Position + Vector3.new(-30,0,0)})
 			tween1:Play()
 			task.wait(0.5)
 			player.Character.Humanoid.Health = 0
@@ -288,6 +290,30 @@ function commands.kidnap(whoFired, player)
 		tween2.Completed:Connect(function()
 			x:Destroy()
 			end)
+	end
+end
+
+function commands.headsize(whoFired, player, amount)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			p.Character.Head.Size = Vector3.new(amount, amount, amount)
+		end
+	else
+		player.Character.Head.Size = Vector3.new(amount,amount,amount)
+	end
+end
+
+function commands.jumppower(whoFired, player, amount)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			p.Character.Humanoid.UseJumpPower = true
+			p.Character.Humanoid.JumpPower = amount
+		end
+	else
+		player.Character.Humanoid.UseJumpPower = true
+		player.Character.Humanoid.JumpPower = amount
 	end
 end
 
