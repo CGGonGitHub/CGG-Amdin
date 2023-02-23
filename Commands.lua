@@ -3,10 +3,15 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local TweenService = game:GetService("TweenService")
+local configs = require(script.Parent.Configures)
+local groupId = configs.groupId
+local modrank = configs.modrank
 local commands = {}
-local tempAdmins = {}
 
 --[[ Functions]]--
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
 local function getPlayer(whoFired: string, pattern: string)
 	if string.match(pattern, "Me") or string.match(pattern, "me") then
 		print(whoFired)
@@ -25,9 +30,67 @@ local function getPlayer(whoFired: string, pattern: string)
 		return nil;
 	end
 end
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+function commands.settempadmin(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if whoFired:GetRankInGroup(groupId) > modrank or table.find(configs.mods, whoFired.Name) or table.find(configs.mods, whoFired.UserId) or whoFired.UserId == game.CreatorId then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.insert(configs.tempadmins, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.insert(configs.tempadmins, playerId)
+		end
+	end
+end
+
+function commands.settempmod(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if whoFired.UserId == game.CreatorId then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.insert(configs.tempmods, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.insert(configs.tempmods, playerId)
+		end
+	end
+end
 
 function commands.setadmin(whoFired, player)
-	if whoFired
+	player = getPlayer(whoFired, player)
+	if whoFired:GetRankInGroup(groupId) > modrank or table.find(configs.mods, whoFired.Name) or table.find(configs.mods, whoFired.UserId) or whoFired.UserId == game.CreatorId then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.insert(configs.admins, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.insert(configs.admins, playerId)
+		end
+	end
+end
+
+function commands.setmod(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if whoFired.UserId == game.CreatorId then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.insert(configs.mods, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.insert(configs.mods, playerId)
+		end
+	end
 end
 
 function commands.kill(whoFired, player)
