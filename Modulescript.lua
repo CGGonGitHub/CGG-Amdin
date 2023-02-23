@@ -258,17 +258,17 @@ function commands.kidnap(whoFired, player)
 	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			player.Character.HumanoidRootPart.Anchored = true
+			p.Character.HumanoidRootPart.Anchored = true
 			local info = TweenInfo.new(2.5)
 			local x = ReplicatedStorage.Van:Clone()
 			x.Parent = workspace
-			x.Position = player.Character.HumanoidRootPart.Position + Vector3.new(30,0,0)
-			x.CFrame = CFrame.lookAt(x.Position, player.Character.HumanoidRootPart.Position)
+			x.Position = p.Character.HumanoidRootPart.Position + Vector3.new(30,0,0)
+			x.CFrame = CFrame.lookAt(x.Position, p.Character.HumanoidRootPart.Position)
 			local tween1 = TweenService:Create(x, info, {Position = p.Character.HumanoidRootPart.Position})
 			local tween2 = TweenService:Create(x, info, {Position =  p.Character.HumanoidRootPart.Position + Vector3.new(-30,0,0)})
 			tween1:Play()
 			task.wait(0.5)
-			player.Character.Humanoid.Health = 0
+			p.Character.Humanoid.Health = 0
 			tween2:Play()
 			tween2.Completed:Connect(function()
 				x:Destroy()
