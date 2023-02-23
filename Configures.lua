@@ -36,7 +36,7 @@ configures.tempmods = {
 }
 -- !! admins have access to all commands except 'ban' and 'setadmin' !! --
 -- list playerId's or USERNAMES (not displaynames!!!) here
-configures.tempmods = {
+configures.tempadmins = {
 	"CGGonRoblox"; -- put usernames in quotation marks ("")
 	1136054560; -- userId's can be left raw
 }
