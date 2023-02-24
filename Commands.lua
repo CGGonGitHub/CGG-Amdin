@@ -14,19 +14,16 @@ local commands = {}
 ----------------------------------------------------------------------------------------------------------------------------------------
 local function getPlayer(whoFired: string, pattern: string)
 	if string.match(pattern, "Me") or string.match(pattern, "me") then
-		print(whoFired)
 		return whoFired;
 	elseif string.match(pattern, "All") or string.match(pattern, "all") then
-		print(Players:GetPlayers())
 		return Players:GetPlayers();
 	else
 		for index, player in next, Players:GetPlayers() do
 			if player.Name:match(pattern) or player.DisplayName:match(pattern) then
-				print(player)
 				return player;
+			end
 		end
-	end
-		
+
 		return nil;
 	end
 end
@@ -35,7 +32,7 @@ end
 ----------------------------------------------------------------------------------------------------------------------------------------
 function commands.settempadmin(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if whoFired:GetRankInGroup(groupId) > modrank or table.find(configs.mods, whoFired.Name) or table.find(configs.mods, whoFired.UserId) or whoFired.UserId == game.CreatorId then
+	if configs.PermissionTable[player] > 4 then
 		if type(player) == "table" then
 			for _, p in player do
 				local playerId = player.UserId
@@ -50,7 +47,7 @@ end
 
 function commands.settempmod(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if whoFired.UserId == game.CreatorId then
+	if configs.PermissionTable[player] > 5 then
 		if type(player) == "table" then
 			for _, p in player do
 				local playerId = player.UserId
@@ -65,7 +62,7 @@ end
 
 function commands.setadmin(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if whoFired:GetRankInGroup(groupId) > modrank or table.find(configs.mods, whoFired.Name) or table.find(configs.mods, whoFired.UserId) or whoFired.UserId == game.CreatorId then
+	if configs.PermissionTable[player] > 4 then
 		if type(player) == "table" then
 			for _, p in player do
 				local playerId = player.UserId
@@ -80,7 +77,7 @@ end
 
 function commands.setmod(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if whoFired.UserId == game.CreatorId then
+	if configs.PermissionTable[player] > 5 then
 		if type(player) == "table" then
 			for _, p in player do
 				local playerId = player.UserId
@@ -89,6 +86,66 @@ function commands.setmod(whoFired, player)
 		else
 			local playerId = player.UserId
 			table.insert(configs.mods, playerId)
+		end
+	end
+end
+
+function commands.removetempadmin(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if configs.PermissionTable[player] > 4 then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.remove(configs.tempadmins, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.remove(configs.tempadmins, playerId)
+		end
+	end
+end
+
+function commands.removetempmod(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if configs.PermissionTable[player] > 5 then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.remove(configs.tempmods, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.remove(configs.tempmods, playerId)
+		end
+	end
+end
+
+function commands.removeadmin(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if configs.PermissionTable[player] > 4 then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.remove(configs.admins, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.remove(configs.admins, playerId)
+		end
+	end
+end
+
+function commands.removemod(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if configs.PermissionTable[player] > 5 then
+		if type(player) == "table" then
+			for _, p in player do
+				local playerId = player.UserId
+				table.remove(configs.mods, playerId)
+			end
+		else
+			local playerId = player.UserId
+			table.remove(configs.mods, playerId)
 		end
 	end
 end
@@ -317,7 +374,7 @@ function commands.sword(whoFired, player)
 		end
 	else
 		local x = ReplicatedStorage.ClassicSword:Clone()
-			x.Parent = player.Backpack
+		x.Parent = player.Backpack
 	end
 end
 
@@ -356,7 +413,7 @@ function commands.kidnap(whoFired, player)
 		tween2:Play()
 		tween2.Completed:Connect(function()
 			x:Destroy()
-			end)
+		end)
 	end
 end
 
@@ -364,10 +421,27 @@ function commands.headsize(whoFired, player, amount)
 	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
-			p.Character.Head.Size = Vector3.new(amount, amount, amount)
+			local x = Players:GetHumanoidDescriptionFromUserId(p.UserId)
+			x.HeadScale = amount
 		end
 	else
-		player.Character.Head.Size = Vector3.new(amount,amount,amount)
+		local x = Players:GetHumanoidDescriptionFromUserId(player.UserId)
+		x.HeadScale = amount
+	end
+end
+
+function commands.char(whoFired, player, target)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			local userId = Players:GetUserIdFromNameAsync(target)
+			local description = Players:GetHumanoidDescriptionFromUserId(userId)
+			p.Character.Humanoid:ApplyDescription(description)
+		end
+	else
+		local userId = Players:GetUserIdFromNameAsync(target)
+		local description = Players:GetHumanoidDescriptionFromUserId(userId)
+		player.Character.Humanoid:ApplyDescription(description)
 	end
 end
 
