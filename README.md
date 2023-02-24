@@ -38,6 +38,8 @@
   
 - **jumppower** `!jumppower [player] [amount]` *sets the jumppower of [player] to [amount]*
   
+- **char** `!char [player] [player2]` *makes player have the character of player2
+  
 - **setadmin** `!setadmin [player]` *gives this player permanent admin*
   
 - **setmod** `!setmod [player]` *gives this player permanent mod*
@@ -46,7 +48,13 @@
   
 - **settempmod** `!settempmod [player]` *gives this player temporary mod (only for the current server*
   
-- **char** `!char [player] [player2]` *makes player have the character of player2*
+- **removeadmin** `!removeadmin [player]` *admin no longer rights :(*
+  
+- **removemod** `!removemod [player]` *mod no longer :((*
+  
+- **removetempadmin** `!removetempadmin [player]` *you wouldnt be able to keep it for long anyways*
+  
+- **removetempmod** `!removetempmod [player]` *well, it has been fun abusing this :D*
   
 
 # more stuff coming soon!
