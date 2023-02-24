@@ -1,13 +1,38 @@
 --[[ Variables ]]--
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
+local DataStoreService = game:GetService("DataStoreService")
 script.Parent.Parent = ServerScriptService
-local commands = require(script.Parent.Commands)
-local configs = require(script.Parent.Configures)
+local commands = require(ServerScriptService["CGG Admin"].Commands)
+local configures = require(ServerScriptService["CGG Admin"].Configures)
 local prefix = "!"
-local ownerId = game.CreatorId
 
 --[[ Functions]]--
+
+local adminStore = DataStoreService:GetDataStore("Admins")
+local modStore = DataStoreService:GetDataStore("Mods")
+while true do
+	local success, updatedTable = pcall(function()
+		return adminStore:UpdateAsync(configures.admins)
+	end)
+	local success, updatedTable = pcall(function()
+		return modStore:UpdateAsync(configures.mods)
+	end)
+	task.wait(60)
+end
+
+Players.PlayerAdded:Connect(function(player)
+	if player.UserId == game.CreatorId then
+		configures.PermissionTable[player] = 5 -- For Owner
+	elseif player:GetRankInGroup(configures.groupId) > configures.modrank or table.find(configures.mods, player.UserId) then
+		configures.PermissionTable[player] = 4 -- For Mods
+	elseif player:GetRankInGroup(configures.groupId) > configures.adminrank or table.find(configures.admins, player.UserId) then
+		configures.PermissionTable[player] = 3 -- For Admins
+	else
+		configures.PermissionTable[player] = 1 -- No Perms!11! LLL
+	end
+end)
+
 function getArgs(splitmsg)
 	local inString = false
 	local newIndex = 1
@@ -40,14 +65,11 @@ Players.PlayerAdded:Connect(function(player)
 	player.Chatted:Connect(function(msg)
 		if string.sub(msg,1,1) == prefix then
 			local playerId = player.UserId
-			local groupId = configs.groupId
-			local adminrank = configs.groupId
-			local mods = configs.mods
-			local admins = configs.admins
-			if player:GetRankInGroup(groupId) > adminrank or table.find(mods, player.Name) or table.find(mods, playerId) or table.find(admins, player.Name) or table.find(admins, playerId) then
+			local groupId = configures.groupId
+			local adminrank = configures.groupId
+			if configures.PermissionTable[player] > 3 then
 				local prefixsplitmsg = string.split(msg, prefix)
 				local splitmsg = string.split(prefixsplitmsg[2], " ")
-				print(splitmsg)
 				local args = getArgs(splitmsg)
 				local lowercommand = string.lower(splitmsg[1])
 				if commands[lowercommand] then
