@@ -1,6 +1,11 @@
 -- [[ Setup ]] --
 local configures = {}
 
+
+configures.chatprefix = "!"
+configures.barprefix = "+"
+
+
 configures.groupId = 14858739  -- Set this to your groupId if you want to use your Group to manage Admins
 configures.modrank = 254 -- anyone that has a higher rank than this will have mod, they can ban players and set temporary admins (only for the active server)
 configures.adminrank = 200 -- anyone that has a higher rank than this will have admin
