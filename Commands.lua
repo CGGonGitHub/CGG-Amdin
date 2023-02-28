@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local TweenService = game:GetService("TweenService")
+local InsertService = game:GetService("InsertService")
 local configs = require(script.Parent.Configures)
 local groupId = configs.groupId
 local modrank = configs.modrank
@@ -37,10 +38,16 @@ function commands.settempadmin(whoFired, player)
 			for _, p in player do
 				local playerId = player.UserId
 				table.insert(configs.tempadmins, playerId)
+				commands.refreshranks(whoFired, player)
+				local x = game.ServerStorage.AdminBar:Clone()
+				x.Parent = p.PlayerGui
 			end
 		else
 			local playerId = player.UserId
 			table.insert(configs.tempadmins, playerId)
+			commands.refreshranks(whoFired, player)
+			local x = game.ServerStorage.AdminBar:Clone()
+			x.Parent = player.PlayerGui
 		end
 	end
 end
@@ -52,40 +59,16 @@ function commands.settempmod(whoFired, player)
 			for _, p in player do
 				local playerId = player.UserId
 				table.insert(configs.tempmods, playerId)
+				commands.refreshranks(whoFired, player)
+				local x = game.ServerStorage.AdminBar:Clone()
+				x.Parent = p.PlayerGui
 			end
 		else
 			local playerId = player.UserId
 			table.insert(configs.tempmods, playerId)
-		end
-	end
-end
-
-function commands.setadmin(whoFired, player)
-	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 4 then
-		if type(player) == "table" then
-			for _, p in player do
-				local playerId = player.UserId
-				table.insert(configs.admins, playerId)
-			end
-		else
-			local playerId = player.UserId
-			table.insert(configs.admins, playerId)
-		end
-	end
-end
-
-function commands.setmod(whoFired, player)
-	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 5 then
-		if type(player) == "table" then
-			for _, p in player do
-				local playerId = player.UserId
-				table.insert(configs.mods, playerId)
-			end
-		else
-			local playerId = player.UserId
-			table.insert(configs.mods, playerId)
+			commands.refreshranks(whoFired, player)
+			local x = game.ServerStorage.AdminBar:Clone()
+			x.Parent = player.PlayerGui
 		end
 	end
 end
@@ -97,10 +80,12 @@ function commands.removetempadmin(whoFired, player)
 			for _, p in player do
 				local playerId = player.UserId
 				table.remove(configs.tempadmins, playerId)
+				commands.refreshranks(whoFired, player)
 			end
 		else
 			local playerId = player.UserId
 			table.remove(configs.tempadmins, playerId)
+			commands.refreshranks(whoFired, player)
 		end
 	end
 end
@@ -112,40 +97,12 @@ function commands.removetempmod(whoFired, player)
 			for _, p in player do
 				local playerId = player.UserId
 				table.remove(configs.tempmods, playerId)
+				commands.refreshranks(whoFired, player)
 			end
 		else
 			local playerId = player.UserId
 			table.remove(configs.tempmods, playerId)
-		end
-	end
-end
-
-function commands.removeadmin(whoFired, player)
-	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 4 then
-		if type(player) == "table" then
-			for _, p in player do
-				local playerId = player.UserId
-				table.remove(configs.admins, playerId)
-			end
-		else
-			local playerId = player.UserId
-			table.remove(configs.admins, playerId)
-		end
-	end
-end
-
-function commands.removemod(whoFired, player)
-	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 5 then
-		if type(player) == "table" then
-			for _, p in player do
-				local playerId = player.UserId
-				table.remove(configs.mods, playerId)
-			end
-		else
-			local playerId = player.UserId
-			table.remove(configs.mods, playerId)
+			commands.refreshranks(whoFired, player)
 		end
 	end
 end
@@ -173,6 +130,28 @@ function commands.anchor(whoFired, player)
 end
 
 function commands.unanchor(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			p.Character.HumanoidRootPart.Anchored = false
+		end
+	else
+		player.Character.HumanoidRootPart.Anchored = false
+	end
+end
+
+function commands.freeze(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			p.Character.HumanoidRootPart.Anchored = true
+		end
+	else
+		player.Character.HumanoidRootPart.Anchored = true
+	end
+end
+
+function commands.unfreeze(whoFired, player)
 	player = getPlayer(whoFired, player)
 	if type(player) == "table" then
 		for _, p in player do
@@ -455,6 +434,141 @@ function commands.jumppower(whoFired, player, amount)
 	else
 		player.Character.Humanoid.UseJumpPower = true
 		player.Character.Humanoid.JumpPower = amount
+	end
+end
+
+function commands.refreshranks(whoFired, player)
+	if player.UserId == game.CreatorId then
+		configs.PermissionTable[player] = 5 -- For Owner
+	elseif player:GetRankInGroup(configs.groupId) > configs.modrank or table.find(configs.mods, player.UserId) then
+		configs.PermissionTable[player] = 4 -- For Mods
+	elseif player:GetRankInGroup(configs.groupId) > configs.adminrank or table.find(configs.admins, player.UserId) then
+		configs.PermissionTable[player] = 3 -- For Admins
+	else
+		configs.PermissionTable[player] = 1 -- No Perms!11! LLL
+	end
+end
+
+function commands.headless(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			p.Character.Head.Transparency = 1
+			p.Character.Head.face.Transparency = 1
+		end
+	else
+		player.Character.Head.Transparency = 1
+		player.Character.Head.face.Transparency = 1
+	end
+end
+
+function commands.unheadless(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			p.Character.Head.Transparency = 0
+			p.Character.Head.face.Transparency = 0
+		end
+	else
+		player.Character.Head.Transparency = 0
+		player.Character.Head.face.Transparency = 0
+	end
+end
+
+function commands.korblox(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			local Humanoid = p.Character:WaitForChild("Humanoid")
+			local Description = Humanoid:GetAppliedDescription()
+			Description.RightLeg = 139607718
+			Humanoid:ApplyDescription(Description)
+		end
+	else
+		local Humanoid = player.Character:WaitForChild("Humanoid")
+		local Description = Humanoid:GetAppliedDescription()
+		Description.RightLeg = 139607718
+		Humanoid:ApplyDescription(Description)
+	end
+end
+
+function commands.gravity(whoFired, amount)
+	workspace.Gravity = amount
+end
+
+function commands.musicplay(whoFired, Id)
+	for i, v in workspace:GetChildren() do
+		if v.Name == "Music from CGGAdmin" then
+			v:Destroy()
+		end
+	end
+	Id = tonumber(Id)
+	local x = Instance.new("Sound")
+	x.SoundId = Id
+	x.Name = "Music from CGGAdmin"
+	x.Parent = workspace
+	x:Play()
+end
+
+function commands.musicpause()
+	local x = workspace:FindFirstChild("Music from CGGAdmin")
+	if x then
+		x:Pause()
+	end
+end
+
+function commands.musicresume()
+	local x = workspace:FindFirstChild("Music from CGGAdmin")
+	if x then
+		x:Resume()
+	end
+end
+
+function commands.musicstop()
+	local x = workspace:FindFirstChild("Music from CGGAdmin")
+	if x then
+		x:Stop()
+	end
+end
+
+function commands.lag(whoFired, player)
+	player = getPlayer(whoFired, player)
+	if type(player) == "table" then
+		for _, p in player do
+			local lag
+			lag = not lag
+			while lag do
+				p.Character.HumanoidRootPart.Anchored = not p.Character.HumanoidRootPart.Anchored
+				task.wait()
+				if not lag then
+					p.Character.HumanoidRootPart.Anchored = false
+				end
+			end
+		end
+	else
+		local lag
+		lag = not lag
+		while lag do
+			player.Character.HumanoidRootPart.Anchored = not player.Character.HumanoidRootPart.Anchored
+			task.wait()
+			if not lag then
+				player.Character.HumanoidRootPart.Anchored = false
+				break
+			end
+		end
+	end
+end
+
+function commands.rejoin(whoFired, player)
+	player = getPlayer(whoFired, player)
+	local JobId = game.JobId
+	local PlaceId = game.PlaceId
+	if type(player) == "table" then
+		for _, p in player do
+			game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId, JobId, p)
+		end
+	else
+		game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceId, JobId, player)
 	end
 end
 
