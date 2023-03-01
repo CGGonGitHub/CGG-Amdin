@@ -8,7 +8,6 @@ local configs = require(script.Parent.Configures)
 local groupId = configs.groupId
 local modrank = configs.modrank
 local commands = {}
-
 --[[ Functions]]--
 ----------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------
@@ -33,40 +32,39 @@ end
 ----------------------------------------------------------------------------------------------------------------------------------------
 function commands.settempadmin(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 4 then
+	if configs.PermissionTable[whoFired.UserId] > 3.9 then
 		if type(player) == "table" then
 			for _, p in player do
-				local playerId = player.UserId
-				table.insert(configs.tempadmins, playerId)
-				commands.refreshranks(whoFired, player)
+				table.insert(configs.admins, p.UserId)
+				commands.refreshranks(whoFired.Userid, p)
 				local x = game.ServerStorage.AdminBar:Clone()
 				x.Parent = p.PlayerGui
 			end
 		else
-			local playerId = player.UserId
-			table.insert(configs.tempadmins, playerId)
-			commands.refreshranks(whoFired, player)
+			table.insert(configs.admins, player.UserId)
+			commands.refreshranks(whoFired.UserId, player)
 			local x = game.ServerStorage.AdminBar:Clone()
 			x.Parent = player.PlayerGui
+			print(configs.PermissionTable[player.UserId])
+			print(player.UserId)
+			print(configs.admins[3])
 		end
 	end
 end
 
 function commands.settempmod(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 5 then
+	if configs.PermissionTable[whoFired.UserId] > 4.9 then
 		if type(player) == "table" then
 			for _, p in player do
-				local playerId = player.UserId
-				table.insert(configs.tempmods, playerId)
-				commands.refreshranks(whoFired, player)
+				table.insert(configs.mods, p.UserId)
+				commands.refreshranks(whoFired.UserId, p)
 				local x = game.ServerStorage.AdminBar:Clone()
 				x.Parent = p.PlayerGui
 			end
 		else
-			local playerId = player.UserId
-			table.insert(configs.tempmods, playerId)
-			commands.refreshranks(whoFired, player)
+			table.insert(configs.mods, player.UserId)
+			commands.refreshranks(whoFired.UserId, player)
 			local x = game.ServerStorage.AdminBar:Clone()
 			x.Parent = player.PlayerGui
 		end
@@ -75,35 +73,47 @@ end
 
 function commands.removetempadmin(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 4 then
+	if configs.PermissionTable[whoFired.UserId] > 3.9 then
 		if type(player) == "table" then
 			for _, p in player do
-				local playerId = player.UserId
-				table.remove(configs.tempadmins, playerId)
-				commands.refreshranks(whoFired, player)
+				table.remove(configs.admins, p.UserId)
+				commands.refreshranks(whoFired.UserId, p)
 			end
 		else
-			local playerId = player.UserId
-			table.remove(configs.tempadmins, playerId)
-			commands.refreshranks(whoFired, player)
+			table.remove(configs.admins, player.UserId)
+			commands.refreshranks(whoFired.UserId, player)
 		end
 	end
 end
 
 function commands.removetempmod(whoFired, player)
 	player = getPlayer(whoFired, player)
-	if configs.PermissionTable[player] > 5 then
+	if configs.PermissionTable[whoFired.UserId] > 4.9 then
 		if type(player) == "table" then
 			for _, p in player do
-				local playerId = player.UserId
-				table.remove(configs.tempmods, playerId)
-				commands.refreshranks(whoFired, player)
+				table.remove(configs.mods, p.UserId)
+				commands.refreshranks(whoFired.UserId, p)
 			end
 		else
-			local playerId = player.UserId
-			table.remove(configs.tempmods, playerId)
-			commands.refreshranks(whoFired, player)
+			table.remove(configs.mods, player.UserId)
+			commands.refreshranks(whoFired.UserId, player)
 		end
+	end
+end
+
+function commands.refreshranks(whoFired, player)
+	if player.UserId == game.CreatorId then
+		configs.PermissionTable[player.UserId] = 5 -- For Owner
+		print("owner")
+	elseif player:GetRankInGroup(configs.groupId) > configs.modrank or table.find(configs.mods, player.UserId) then
+		print("mod")
+		configs.PermissionTable[player.UserId] = 4 -- For Mods
+	elseif player:GetRankInGroup(configs.groupId) > configs.adminrank or table.find(configs.admins, player.UserId) then
+		print("admin")
+		configs.PermissionTable[player.UserId] = 3 -- For Admins
+	else
+		print("no perms")
+		configs.PermissionTable[player.UserId] = 1 -- No Perms!11! LLL
 	end
 end
 
@@ -434,18 +444,6 @@ function commands.jumppower(whoFired, player, amount)
 	else
 		player.Character.Humanoid.UseJumpPower = true
 		player.Character.Humanoid.JumpPower = amount
-	end
-end
-
-function commands.refreshranks(whoFired, player)
-	if player.UserId == game.CreatorId then
-		configs.PermissionTable[player] = 5 -- For Owner
-	elseif player:GetRankInGroup(configs.groupId) > configs.modrank or table.find(configs.mods, player.UserId) then
-		configs.PermissionTable[player] = 4 -- For Mods
-	elseif player:GetRankInGroup(configs.groupId) > configs.adminrank or table.find(configs.admins, player.UserId) then
-		configs.PermissionTable[player] = 3 -- For Admins
-	else
-		configs.PermissionTable[player] = 1 -- No Perms!11! LLL
 	end
 end
 
