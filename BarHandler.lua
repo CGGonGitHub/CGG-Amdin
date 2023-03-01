@@ -12,7 +12,7 @@ local Event = ReplicatedStorage.AdminBarEvent
 --[[ Functions]]--
 Players.PlayerAdded:Connect(function(player)
 	commands.refreshranks("pp", player)
-	if configures.PermissionTable[player] > 3 then
+	if configures.PermissionTable[player.UserId] > 2.9 then
 		local x = game.ServerStorage.AdminBar:Clone()
 		x.Parent = player.PlayerGui		
 	end
@@ -50,7 +50,7 @@ Event.OnServerEvent:Connect(function(player, input)
 	local playerId = player.UserId
 	local groupId = configures.groupId
 	local adminrank = configures.groupId
-	if configures.PermissionTable[player] > 3 then
+	if configures.PermissionTable[player.UserId] > 2.9 then
 		local splitmsg = string.split(input, " ")
 		local args = getArgs(splitmsg)
 		local lowercommand = string.lower(splitmsg[1])
