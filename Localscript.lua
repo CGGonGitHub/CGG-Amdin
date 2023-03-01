@@ -31,14 +31,17 @@ local commands = {
 
 TextBox:GetPropertyChangedSignal("Text"):Connect(function()
 	local text = TextBox.Text
-	if string.len(text) < 2 then
+	if text == "" then
+		TextLabel.Text = ""
+		return
+	elseif string.len(text) < 2 then
 		return
 	else
 		for i, v in commands do
 			if string.match(v, text) then
 				TextLabel.Text = v
 			end
-		end		
+		end
 	end
 end)
 
@@ -48,5 +51,6 @@ TextBox.FocusLost:Connect(function(enterPressed, inputThatCausedFocusLost)
 		Event:FireServer(input)
 	else
 		TextBox.Text = ""
+		TextLabel.Text = ""
 	end
 end)
