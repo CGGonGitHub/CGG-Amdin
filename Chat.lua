@@ -4,7 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 script.Parent.Parent = ServerScriptService
 local commands = require(ServerScriptService["CGG Admin"].Commands)
 local configures = require(ServerScriptService["CGG Admin"].Configures)
-local prefix = configures.prefix
+local prefix = configures.ChatPrefix
 
 --[[ Functions]]--
 function getArgs(splitmsg)
@@ -12,9 +12,9 @@ function getArgs(splitmsg)
 	local newIndex = 1
 	local args = {}
 	for _, element in splitmsg do
-		
+
 		local numChars = string.len(element)
-		
+
 		if element:sub(1,1) == '"' then
 			inString = true
 		end
@@ -36,13 +36,10 @@ function getArgs(splitmsg)
 end
 -- made by Cens_r
 Players.PlayerAdded:Connect(function(player)
-	commands.refreshranks("pp", player)
+	commands.refreshranks("this is a string with no use", player)
 	player.Chatted:Connect(function(msg)
 		if string.sub(msg,1,1) == prefix then
-			local playerId = player.UserId
-			local groupId = configures.groupId
-			local adminrank = configures.groupId
-			if configures.PermissionTable[player] > 3 then
+			if configures.PermissionTable[player.UserId] > 2.9 then
 				local prefixsplitmsg = string.split(msg, prefix)
 				local splitmsg = string.split(prefixsplitmsg[2], " ")
 				local args = getArgs(splitmsg)
